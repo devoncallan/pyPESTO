@@ -10,6 +10,7 @@ RUN apt-get update \
     git \
     libatlas-base-dev \
     libhdf5-serial-dev \
+    libgl1-mesa-glx \
     python-is-python3 \
     python3 \
     python3-dev \
@@ -36,6 +37,7 @@ RUN pip3 install --no-cache-dir h5py
 RUN pip3 install --no-cache-dir pypesto[amici,petab,fides]
 RUN pip3 install --no-cache-dir jupyter
 RUN pip3 install --no-cache-dir pyswarm
+RUN pip3 install --no-cache-dir SBMLDiagrams
 
 # Generate Jupyter Notebook configuration file
 RUN jupyter notebook --generate-config
