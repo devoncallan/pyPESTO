@@ -15,16 +15,44 @@ RUN apt-get update \
     python3-dev \
     python3-pip \
     swig \
-    && ln -sf /usr/bin/swig4.0 /usr/bin/swig
+    pkg-config \
+    && ln -sf /usr/bin/swig4.0 /usr/bin/swig \
+    && apt-get clean \
+    && rm -rf /var/lib/apt/lists/*
 
+# Verify CMake installation
+RUN cmake --version
 
 ENV AMICI_CXXFLAGS -fopenmp
 ENV AMICI_LDFLAGS -fopenmp
 
-RUN pip3 install -U --upgrade pip wheel \
-    && pip3 install python-libsbml>=5.17.0 \
-    && pip3 install -v amici[petab,pysb] \
-    && python3 -m amici
+# Upgrade pip and install necessary Python packages
+RUN pip3 install --no-cache-dir --upgrade pip wheel setuptools>=61.2
 
-# RUN pip3 install git+https://github.com/ICB-DCM/pyPESTO.git@develop#egg=pypesto
-RUN pip3 install pyPESTO jupyter pyswarm dlib
+RUN pip3 install --no-cache-dir python-libsbml>=5.17.0 \
+    && pip3 install --no-cache-dir dlib
+
+RUN pip3 install --no-cache-dir h5py
+RUN pip3 install --no-cache-dir pypesto[amici,petab,fides]
+RUN pip3 install --no-cache-dir jupyter
+RUN pip3 install --no-cache-dir pyswarm
+
+# Generate Jupyter Notebook configuration file
+RUN jupyter notebook --generate-config
+
+# Disable password and token authentication
+RUN echo "c.NotebookApp.token = ''" >> /root/.jupyter/jupyter_notebook_config.py \
+    && echo "c.NotebookApp.password = ''" >> /root/.jupyter/jupyter_notebook_config.py \
+    && echo "c.NotebookApp.open_browser = False" >> /root/.jupyter/jupyter_notebook_config.py \
+    && echo "c.NotebookApp.ip = '0.0.0.0'" >> /root/.jupyter/jupyter_notebook_config.py \
+    && echo "c.NotebookApp.port = 8888" >> /root/.jupyter/jupyter_notebook_config.py \
+    && echo "c.NotebookApp.allow_root = True" >> /root/.jupyter/jupyter_notebook_config.py
+
+# Expose the port for Jupyter Notebook
+EXPOSE 8888
+
+# Set the working directory
+WORKDIR /mnt/pyPESTO
+
+# Command to run when the container starts
+CMD ["jupyter", "notebook"]
