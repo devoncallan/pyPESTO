@@ -29,9 +29,9 @@ ENV AMICI_LDFLAGS -fopenmp
 
 # Upgrade pip and install necessary Python packages
 RUN pip3 install --no-cache-dir --upgrade pip wheel setuptools>=61.2
-
-RUN pip3 install --no-cache-dir python-libsbml>=5.17.0 \
-    && pip3 install --no-cache-dir dlib
+RUN pip3 install --no-cache-dir cmake
+RUN pip3 install --no-cache-dir dlib -vvv
+RUN pip3 install --no-cache-dir python-libsbml>=5.17.0
 
 RUN pip3 install --no-cache-dir h5py
 RUN pip3 install --no-cache-dir pypesto[amici,petab,fides]
