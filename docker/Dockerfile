@@ -57,4 +57,4 @@ EXPOSE 8888
 WORKDIR /mnt/pyPESTO
 
 # Command to run when the container starts
-CMD ["jupyter", "notebook"]
+# CMD ["jupyter", "notebook"]
